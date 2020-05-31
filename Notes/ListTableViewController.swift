@@ -7,10 +7,14 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ListTableViewController: UITableViewController {
     
-    var notes = ["aaa", "bbb", "cccddd"]
+    var realm: Realm!
+    var notes: Results<Note>!
+    var uuid = ""
+    let segueToDetailView = "toDetailView"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +24,14 @@ class ListTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        realm = try! Realm()
+        notes = realm.objects(Note.self).sorted(byKeyPath: "updateAt", ascending: false)
+        self.tableView.reloadData()
     }
 
     // MARK: - Table view data source
@@ -36,13 +48,14 @@ class ListTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-        cell.textLabel?.text = notes[indexPath.row]
+        cell.textLabel?.text = notes[indexPath.row].title
 
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.performSegue(withIdentifier: "toDetailView", sender: nil)
+        uuid = notes[indexPath.row].uuid
+        self.performSegue(withIdentifier: segueToDetailView, sender: nil)
     }
 
     /*
@@ -80,18 +93,18 @@ class ListTableViewController: UITableViewController {
     }
     */
 
-    /*
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == segueToDetailView {
+            let next = segue.destination as? DetailViewController
+            next?.uuid = uuid
+        }
     }
-    */
     
     @IBAction func tapAddButton(_ sender: Any) {
-        self.performSegue(withIdentifier: "toDetailView", sender: nil)
+        uuid = ""
+        self.performSegue(withIdentifier: segueToDetailView, sender: nil)
     }
     
 }

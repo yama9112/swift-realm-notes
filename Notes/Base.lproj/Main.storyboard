@@ -94,7 +94,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="FWr-XJ-6VT"/>
                     </view>
-                    <navigationItem key="navigationItem" id="wnf-JY-XYX"/>
+                    <navigationItem key="navigationItem" id="wnf-JY-XYX">
+                        <barButtonItem key="rightBarButtonItem" title="Save" id="vm9-XY-6kB">
+                            <connections>
+                                <action selector="tapSaveButton:" destination="Z6Q-nH-zb9" id="RKR-FR-RTS"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="contentsField" destination="DYd-fh-G1d" id="xex-0U-Ykd"/>
                         <outlet property="titleField" destination="h1Y-vx-ylo" id="P8q-W8-XQM"/>
