@@ -8,18 +8,22 @@
 
 import UIKit
 import RealmSwift
+import Toast
 
 class DetailViewController: UIViewController {
     
     @IBOutlet weak var titleField: UITextField!
     @IBOutlet weak var contentsField: PlaceholderTextView!
-
+    @IBOutlet weak var saveButton: UIBarButtonItem!
+    
     var realm: Realm!
     var note: Note!
     var uuid = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        titleField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
         contentsField.placeHolder = "メモ"
         realm = try! Realm()
     }
@@ -40,14 +44,21 @@ class DetailViewController: UIViewController {
             contentsField.text = note.contents
         }
     }
+    
+    @objc func textFieldEditingChanged(sender: UITextField) {
+        saveButton.isEnabled = sender.text != ""
+    }
 
     @IBAction func tapSaveButton(_ sender: Any) {
+        
         try! realm.write() {
             note.title = titleField.text!
             note.contents = contentsField.text!
             note.updateAt = Date()
             realm.add(note, update: .modified)
         }
+        
+        self.view.makeToast("保存しました。", duration: 2.0, position: .center)
     }
 
 }
